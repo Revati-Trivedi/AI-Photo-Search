@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<script src="js/sdk/lib/axios/dist/axios.standalone.js"></script>
+    		<script src="js/sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    		<script src="js/sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    		<script src="js/sdk/lib/CryptoJS/components/hmac.js"></script>
+    		<script src="js/sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    		<script src="js/sdk/lib/url-template/url-template.js"></script>
+    		<script src="js/sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    		<script src="js/sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    		<script src="js/sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    		<script src="js/sdk/lib/apiGatewayCore/utils.js"></script>
+		<script src="js/aws-sdk.min.js"></script>
+		<script src="js/sdk/apigClient.js"></script>
+        <script type="text/javascript">
+            function uploadFile()
+            {
+		var sdk = apigClientFactory.newClient({});
+                
+		//TODO: Take file and custom labels
+                
+		var file = document.getElementById("file").files[0];
+		
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var body = (e.target.result).split(',')[1];
+			var file_type = file.type;
+			var file_name = file.name;
+			var custom_labels = document.getElementById('labels').value;
+			let config = { headers: {'Content-Type': file_type ,'file-name':file_name,'labels':custom_labels} };
+			sdk.uploadPost({},body,config).then((response)=>{
+				if(response.status == 200)
+				{
+					alert("Photo uploaded successfully");
+				}
+				else
+				{
+					alert("Encountered some error while uploading the photo");
+				}
+			}); 
+		};
+		reader.onerror = function(e) {
+			// error occurred
+			console.log('Error : ' + e.type);
+		};
+		
+		// TODO: Add extra supplied labels to the header here only
+		reader.readAsDataURL(file);
+        //TODO: Make a POST call to the backend
+            }
+        </script>
+		<style>
+			body {
+				margin: 10px;
+			}
+		</style>
+    </head>
+    <body>
+		<span>
+			<h3 style="align:center"><a href="home.html">Home page</a></h3>
+			<h3 style="align:center">Upload page</h3>
+		</span>
+        <form action="javascript:uploadFile()" enctype="multipart/form-data">
+            <div>
+				<input type="file" id="file">
+			</div>
+			<br>
+			<div>
+				<textarea id="labels"></textarea>
+			</div>
+			<br>
+			<input type="submit" value="Upload" name="submit">
+        </form>
+    </body>
+</html>
